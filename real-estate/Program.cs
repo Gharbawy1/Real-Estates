@@ -25,7 +25,7 @@ namespace real_estate
             );
 
             builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
-
+            builder.Services.AddAutoMapper(typeof(Program));
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
