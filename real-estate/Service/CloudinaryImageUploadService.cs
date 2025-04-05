@@ -25,9 +25,9 @@ namespace real_estate.Service
             _cloudinary = new Cloudinary(account);
             _cloudinary.Api.Secure = true;
         }
-        public async Task<List<UploadedImageDto>> UploadAsync(ICollection<IFormFile> files)
+        public async Task<List<string>> UploadAsync(ICollection<IFormFile> files)
         {
-            var imageUrls = new List<UploadedImageDto>();
+            var imageUrls = new List<string>();
 
             foreach (var file in files)
             {
@@ -47,11 +47,7 @@ namespace real_estate.Service
                     throw new Exception($"Cloudinary error occured: {result.Error.Message}");
                 }
 
-                imageUrls.Add(new UploadedImageDto { 
-                    Url = result.Url.ToString(),
-                    PublicId = result.PublicId,
-                
-                });
+                imageUrls.Add(result.Url.ToString());
             }
 
             return imageUrls;

@@ -28,7 +28,7 @@ namespace real_estate.Models
 
         public bool IsAvailable { get; set; } = true; // هل العقار متاح؟
 
-        public List<RealEstateImage> Images { get; set; } // صور العقار
+        public List<string> Images { get; set; } // صور العقار
 
         public int OwnerId { get; set; }
         public Owner? Owner { get; set; } // المالك

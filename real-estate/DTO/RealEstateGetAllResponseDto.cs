@@ -4,14 +4,11 @@ namespace real_estate.DTO
 {
     public class RealEstateGetAllResponseDto
     {
-        [Required]
-        [MaxLength(200)]
         public string Title { get; set; }
 
-        [Required]
+        
         public string Description { get; set; }
 
-        [Required]
         public string Address { get; set; }
 
         public decimal Price { get; set; }
@@ -21,6 +18,8 @@ namespace real_estate.DTO
         public int Bedrooms { get; set; } // عدد غرف النوم
 
         public int Bathrooms { get; set; } // عدد الحمامات
+
+        public List<string> Images { get; set; }
 
         public string TypeName { get; set; } // نوع العقار (شقة، فيلا، محل تجاري...)
 

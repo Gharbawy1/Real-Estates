@@ -30,7 +30,9 @@ namespace real_estate.Controllers
             var estates = await _realEstateDbContext.RealEstates
                         .Include(re => re.EstateType)
                         .Include(re => re.Owner)
+                        //.Include(re=>re.Images)
                         .ToListAsync();
+            // From RealEstateImage to list<string>
 
             var mappedEstates = _mapper.Map<List<RealEstateGetAllResponseDto>>(estates);
             return Ok(mappedEstates);
@@ -38,10 +40,10 @@ namespace real_estate.Controllers
 
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddRealEstate([FromBody] RealEstateDto EstateFromReq) 
+        public async Task<IActionResult> AddRealEstate([FromForm] RealEstateDto EstateFromReq)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var imageUrls = new List<UploadedImageDto>();
+            var imageUrls = new List<string>();
 
             // upload images on cloudinary
             if (EstateFromReq.Images.Count > 0)
@@ -58,9 +60,9 @@ namespace real_estate.Controllers
                 Area = EstateFromReq.Area,
                 Bedrooms = EstateFromReq.Bedrooms,
                 Bathrooms = EstateFromReq.Bathrooms,
-                 EstateTypeId = EstateFromReq.TypeId,
+                EstateTypeId = EstateFromReq.TypeId,
                 IsAvailable = EstateFromReq.IsAvailable,
-                Images = _mapper.Map<List<RealEstateImage>>(imageUrls),
+                Images = imageUrls,
                 OwnerId = EstateFromReq.OwnerId,
                 CreatedAt = DateTime.UtcNow
             };
@@ -70,8 +72,10 @@ namespace real_estate.Controllers
             return Ok(realEstate);
         }
 
+
+
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] RealEstateDto EstateFromReq)
+        public async Task<IActionResult> Update(int id, [FromForm] RealEstateDto EstateFromReq)
         {
             var estate = await _realEstateDbContext.RealEstates.FindAsync(id);
             if (estate == null) return NotFound($"Real estate with ID {id} not found.");
@@ -80,7 +84,7 @@ namespace real_estate.Controllers
             if (EstateFromReq.Images != null && EstateFromReq.Images.Count > 0)
             {
                 var imageUrls = await _cloudinaryImageUploadService.UploadAsync(EstateFromReq.Images);
-                estate.Images = _mapper.Map<List<RealEstateImage>>(imageUrls);
+                estate.Images = imageUrls;
             }
 
             estate.Title = EstateFromReq.Title;
@@ -109,12 +113,12 @@ namespace real_estate.Controllers
 
             if (estate == null) return NotFound($"Real estate with ID {id} not found.");
 
-            var publicIds = estate.Images.Select(img => img.PublicId).ToList();
+            //var publicIds = estate.Images.Select(img => img.PublicId).ToList();
 
-            // حذف الصور من Cloudinary
-            await _cloudinaryImageUploadService.DeleteImagesAsync(publicIds);
+            //// حذف الصور من Cloudinary
+            //await _cloudinaryImageUploadService.DeleteImagesAsync(publicIds);
 
-            _realEstateDbContext.RealEstateImages.RemoveRange(estate.Images);
+            //_realEstateDbContext.RealEstateImages.RemoveRange(estate.Images);
             _realEstateDbContext.RealEstates.Remove(estate);
             await _realEstateDbContext.SaveChangesAsync();
 

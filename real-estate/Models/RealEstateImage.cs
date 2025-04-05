@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace real_estate.Models
 {
@@ -9,8 +10,11 @@ namespace real_estate.Models
         [Key]
         public string PublicId { get; set; } = null!;
 
+        [JsonIgnore]
         public int RealEstateId { get; set; }
-        public RealEstate RealEstate { get; set; } = null!;
+        [JsonIgnore]
+
+        public RealEstate? RealEstate { get; set; } = null!;
 
     }
 }

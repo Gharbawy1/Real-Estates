@@ -37,7 +37,7 @@ namespace real_estate.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EstateTypes");
+                    b.ToTable("EstateTypes", (string)null);
                 });
 
             modelBuilder.Entity("real_estate.Models.Owner", b =>
@@ -67,7 +67,7 @@ namespace real_estate.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Owners");
+                    b.ToTable("Owners", (string)null);
                 });
 
             modelBuilder.Entity("real_estate.Models.RealEstate", b =>
@@ -101,6 +101,10 @@ namespace real_estate.Migrations
                     b.Property<int>("EstateTypeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Images")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
@@ -121,26 +125,7 @@ namespace real_estate.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("RealEstates");
-                });
-
-            modelBuilder.Entity("real_estate.Models.RealEstateImage", b =>
-                {
-                    b.Property<string>("PublicId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("RealEstateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PublicId");
-
-                    b.HasIndex("RealEstateId");
-
-                    b.ToTable("RealEstateImages");
+                    b.ToTable("RealEstates", (string)null);
                 });
 
             modelBuilder.Entity("real_estate.Models.RealEstate", b =>
@@ -162,17 +147,6 @@ namespace real_estate.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("real_estate.Models.RealEstateImage", b =>
-                {
-                    b.HasOne("real_estate.Models.RealEstate", "RealEstate")
-                        .WithMany("Images")
-                        .HasForeignKey("RealEstateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RealEstate");
-                });
-
             modelBuilder.Entity("real_estate.Models.EstateType", b =>
                 {
                     b.Navigation("RealEstates");
@@ -181,11 +155,6 @@ namespace real_estate.Migrations
             modelBuilder.Entity("real_estate.Models.Owner", b =>
                 {
                     b.Navigation("RealEstates");
-                });
-
-            modelBuilder.Entity("real_estate.Models.RealEstate", b =>
-                {
-                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }
