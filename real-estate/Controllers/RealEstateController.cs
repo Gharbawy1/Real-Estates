@@ -23,13 +23,17 @@ namespace real_estate.Controllers
             _realEstateDbContext = realEstateDbContext;
             _mapper = mapper;
         }
+
         [HttpGet("all")]
-        public async Task<ActionResult<List<RealEstate>>> GetAll()
+        public async Task<ActionResult<List<RealEstateGetAllResponseDto>>> GetAll()
         {
-            return await _realEstateDbContext.RealEstates
+            var estates = await _realEstateDbContext.RealEstates
                         .Include(re => re.EstateType)
                         .Include(re => re.Owner)
                         .ToListAsync();
+
+            var mappedEstates = _mapper.Map<List<RealEstateGetAllResponseDto>>(estates);
+            return Ok(mappedEstates);
         }
 
 
