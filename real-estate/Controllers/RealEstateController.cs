@@ -25,33 +25,53 @@ namespace real_estate.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<object>> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<List<RealEstateGetAllResponseDto>>> GetAll(
+    [FromQuery] int? estateTypeId,
+    [FromQuery] bool? isAvailable,
+    [FromQuery] string? sortByPrice,
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
         {
-            if (pageNumber <= 0) pageNumber = 1;
-            if (pageSize <= 0) pageSize = 10;
-
-            var totalCount = await _realEstateDbContext.RealEstates.CountAsync();
-
-            var estates = await _realEstateDbContext.RealEstates
+            var query = _realEstateDbContext.RealEstates
                 .Include(re => re.EstateType)
                 .Include(re => re.Owner)
-                .OrderByDescending(re => re.CreatedAt) // ترتيب من الأحدث
+                .AsQueryable();
+
+            // فلترة حسب نوع العقار
+            if (estateTypeId.HasValue)
+                query = query.Where(re => re.EstateTypeId == estateTypeId.Value);
+
+            // فلترة حسب الحالة
+            if (isAvailable.HasValue)
+                query = query.Where(re => re.IsAvailable == isAvailable.Value);
+
+            // الترتيب حسب السعر لو مستخدم طلبه
+            if (!string.IsNullOrEmpty(sortByPrice))
+            {
+                if (sortByPrice.ToLower() == "asc")
+                    query = query.OrderBy(re => re.Price);
+                else if (sortByPrice.ToLower() == "desc")
+                    query = query.OrderByDescending(re => re.Price);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var estates = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
             var mappedEstates = _mapper.Map<List<RealEstateGetAllResponseDto>>(estates);
 
-            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-
             return Ok(new
             {
-                currentPage = pageNumber,
-                totalPages = totalPages,
-                totalItems = totalCount,
-                items = mappedEstates
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Data = mappedEstates
             });
         }
+
 
 
         [HttpPost("add")]
