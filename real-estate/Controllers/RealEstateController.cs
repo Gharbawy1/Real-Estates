@@ -15,9 +15,9 @@ namespace real_estate.Controllers
     {
         private readonly RealEstateDbContext _realEstateDbContext;
         private readonly IImageUploadService _cloudinaryImageUploadService;
-        private readonly Mapper _mapper;
+        private readonly IMapper _mapper;
 
-        public RealEstateController(IImageUploadService cloudinaryImageUploadService, RealEstateDbContext realEstateDbContext, Mapper mapper)
+        public RealEstateController(IImageUploadService cloudinaryImageUploadService, RealEstateDbContext realEstateDbContext, IMapper mapper)
         {
             _cloudinaryImageUploadService = cloudinaryImageUploadService;
             _realEstateDbContext = realEstateDbContext;
