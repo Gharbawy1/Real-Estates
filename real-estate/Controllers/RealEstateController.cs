@@ -25,17 +25,32 @@ namespace real_estate.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<List<RealEstateGetAllResponseDto>>> GetAll()
+        public async Task<ActionResult<object>> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
+            if (pageNumber <= 0) pageNumber = 1;
+            if (pageSize <= 0) pageSize = 10;
+
+            var totalCount = await _realEstateDbContext.RealEstates.CountAsync();
+
             var estates = await _realEstateDbContext.RealEstates
-                        .Include(re => re.EstateType)
-                        .Include(re => re.Owner)
-                        //.Include(re=>re.Images)
-                        .ToListAsync();
-            // From RealEstateImage to list<string>
+                .Include(re => re.EstateType)
+                .Include(re => re.Owner)
+                .OrderByDescending(re => re.CreatedAt) // ترتيب من الأحدث
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             var mappedEstates = _mapper.Map<List<RealEstateGetAllResponseDto>>(estates);
-            return Ok(mappedEstates);
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return Ok(new
+            {
+                currentPage = pageNumber,
+                totalPages = totalPages,
+                totalItems = totalCount,
+                items = mappedEstates
+            });
         }
 
 
