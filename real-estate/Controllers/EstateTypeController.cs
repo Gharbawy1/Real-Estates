@@ -28,7 +28,11 @@ namespace real_estate.Controllers
         [HttpGet("get-by-id/{id}")]
         public async Task<ActionResult<EstateType>> GetById(int id)
         {
-            return await _context.EstateTypes.FindAsync(id);
+            var type =  await _context.EstateTypes.FindAsync(id);
+            if (type == null) {
+                return NotFound($"Estate Type with id {id} not found");
+            }
+            return Ok(type);
         }
 
         [HttpPost("add")]
