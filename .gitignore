@@ -6,3 +6,6 @@
 /.vs
 /real-estate/obj
 /real-estate/.env
+/real-estate/.config
+/real-estate/bin/Release/net8.0
+/real-estate/Properties/PublishProfiles

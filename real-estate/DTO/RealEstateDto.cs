@@ -23,13 +23,15 @@ namespace real_estate.DTO
 
         public int Bathrooms { get; set; } // عدد الحمامات
 
-        public int TypeId { get; set; } // نوع العقار (شقة، فيلا، محل تجاري...)
+        //public int TypeId { get; set; } // نوع العقار (شقة، فيلا، محل تجاري...)
 
+        public string EstateType { get; set; }
+        public string OwnerName { get; set; }
         public bool IsAvailable { get; set; } = true; // هل العقار متاح؟
 
         public ICollection<IFormFile> Images { get; set; } // صور العقار
 
-        public int OwnerId { get; set; }
+        //public int OwnerId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

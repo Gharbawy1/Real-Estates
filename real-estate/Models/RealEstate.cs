@@ -23,15 +23,18 @@ namespace real_estate.Models
 
         public int Bathrooms { get; set; } // عدد الحمامات
 
-        public int EstateTypeId { get; set; }
-        public EstateType? EstateType { get; set; }
+        //public int EstateTypeId { get; set; }
+        //public EstateType? EstateType { get; set; }
+
+        public string EstateType { get; set; }
+        public string OwnerName { get; set; }
 
         public bool IsAvailable { get; set; } = true; // هل العقار متاح؟
 
         public List<string> Images { get; set; } // صور العقار
 
-        public int OwnerId { get; set; }
-        public Owner? Owner { get; set; } // المالك
+        //public int OwnerId { get; set; }
+        //public Owner? Owner { get; set; } // المالك
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

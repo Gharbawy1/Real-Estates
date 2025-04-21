@@ -21,7 +21,7 @@ namespace real_estate
             );
 
             builder.Services.AddDbContext<RealEstateDbContext>(opt =>
-                opt.UseSqlServer(builder.Configuration.GetConnectionString("DevCS"))
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("ProdCS"))
             );
 
             builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
@@ -32,14 +32,27 @@ namespace real_estate
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("MyPolicy", policy =>
+                {
+                    // Allow Any Request and any origin in MyPloicy Profile to request my endpoints 
+                    policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+                });
+            });
+
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment()||app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("MyPolicy");
 
             app.UseHttpsRedirection();
 

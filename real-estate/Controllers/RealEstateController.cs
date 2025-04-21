@@ -25,51 +25,54 @@ namespace real_estate.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<List<RealEstateGetAllResponseDto>>> GetAll(
-    [FromQuery] int? estateTypeId,
-    [FromQuery] bool? isAvailable,
-    [FromQuery] string? sortByPrice,
-    [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<List<RealEstate>>> GetAll(
+    //[FromQuery] int? estateTypeId,
+    //[FromQuery] bool? isAvailable,
+    //[FromQuery] string? sortByPrice,
+    //[FromQuery] int pageNumber = 1,
+    //[FromQuery] int pageSize = 10
+            
+            )
         {
-            var query = _realEstateDbContext.RealEstates
-                .Include(re => re.EstateType)
-                .Include(re => re.Owner)
-                .AsQueryable();
-
-            // فلترة حسب نوع العقار
-            if (estateTypeId.HasValue)
-                query = query.Where(re => re.EstateTypeId == estateTypeId.Value);
-
-            // فلترة حسب الحالة
-            if (isAvailable.HasValue)
-                query = query.Where(re => re.IsAvailable == isAvailable.Value);
-
-            // الترتيب حسب السعر لو مستخدم طلبه
-            if (!string.IsNullOrEmpty(sortByPrice))
-            {
-                if (sortByPrice.ToLower() == "asc")
-                    query = query.OrderBy(re => re.Price);
-                else if (sortByPrice.ToLower() == "desc")
-                    query = query.OrderByDescending(re => re.Price);
-            }
-
-            var totalCount = await query.CountAsync();
-
-            var estates = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+            var query = await _realEstateDbContext.RealEstates
+                //.Include(re => re.EstateType)
+                //.Include(re => re.Owner)
                 .ToListAsync();
 
-            var mappedEstates = _mapper.Map<List<RealEstateGetAllResponseDto>>(estates);
+            //// فلترة حسب نوع العقار
+            //if (estateTypeId.HasValue)
+            //    query = query.Where(re => re.EstateTypeId == estateTypeId.Value);
 
-            return Ok(new
-            {
-                TotalCount = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                Data = mappedEstates
-            });
+            //// فلترة حسب الحالة
+            //if (isAvailable.HasValue)
+            //    query = query.Where(re => re.IsAvailable == isAvailable.Value);
+
+            //// الترتيب حسب السعر لو مستخدم طلبه
+            //if (!string.IsNullOrEmpty(sortByPrice))
+            //{
+            //    if (sortByPrice.ToLower() == "asc")
+            //        query = query.OrderBy(re => re.Price);
+            //    else if (sortByPrice.ToLower() == "desc")
+            //        query = query.OrderByDescending(re => re.Price);
+            //}
+
+            //var totalCount = await query.CountAsync();
+
+            //var estates = await query
+            //    .Skip((pageNumber - 1) * pageSize)
+            //    .Take(pageSize)
+            //    .ToListAsync();
+
+            //var mappedEstates = _mapper.Map<List<RealEstateGetAllResponseDto>>(estates);
+
+            //return Ok(new
+            //{
+            //    TotalCount = totalCount,
+            //    PageNumber = pageNumber,
+            //    PageSize = pageSize,
+            //    Data = mappedEstates
+            //});
+            return query;
         }
 
 
@@ -95,10 +98,10 @@ namespace real_estate.Controllers
                 Area = EstateFromReq.Area,
                 Bedrooms = EstateFromReq.Bedrooms,
                 Bathrooms = EstateFromReq.Bathrooms,
-                EstateTypeId = EstateFromReq.TypeId,
+                EstateType = EstateFromReq.EstateType,
                 IsAvailable = EstateFromReq.IsAvailable,
                 Images = imageUrls,
-                OwnerId = EstateFromReq.OwnerId,
+                OwnerName = EstateFromReq.OwnerName,
                 CreatedAt = DateTime.UtcNow
             };
             _realEstateDbContext.RealEstates.Add(realEstate);
@@ -129,9 +132,9 @@ namespace real_estate.Controllers
             estate.Area = EstateFromReq.Area;
             estate.Bedrooms = EstateFromReq.Bedrooms;
             estate.Bathrooms = EstateFromReq.Bathrooms;
-            estate.EstateTypeId = EstateFromReq.TypeId;
+            estate.EstateType = EstateFromReq.EstateType;
             estate.IsAvailable = EstateFromReq.IsAvailable;
-            estate.OwnerId = EstateFromReq.OwnerId;
+            estate.OwnerName = EstateFromReq.OwnerName;
 
             _realEstateDbContext.RealEstates.Update(estate);
             await _realEstateDbContext.SaveChangesAsync();

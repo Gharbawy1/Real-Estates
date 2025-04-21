@@ -9,9 +9,9 @@ namespace real_estate.profiles
         public RealEstateProfile() { 
             CreateMap<RealEstateDto, RealEstateGetAllResponseDto > ();
 
-            CreateMap<RealEstate, RealEstateGetAllResponseDto>()
-                .ForMember(dest => dest.TypeName,
-                           opt => opt.MapFrom(src => src.EstateType.Name));
+            //CreateMap<RealEstate, RealEstateGetAllResponseDto>()
+            //    .ForMember(dest => dest.TypeName,
+            //               opt => opt.MapFrom(src => src.EstateType));
 
             //CreateMap<List<RealEstateImage>, List<string>>();
 
