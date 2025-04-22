@@ -6,6 +6,7 @@ using real_estate.DTO;
 using real_estate.Models;
 using real_estate.Models.ApplicationContext;
 using real_estate.Service;
+using System.Xml;
 
 namespace real_estate.Controllers
 {
@@ -37,6 +38,7 @@ namespace real_estate.Controllers
             var query = await _realEstateDbContext.RealEstates
                 //.Include(re => re.EstateType)
                 //.Include(re => re.Owner)
+                .Include(rs=>rs.Images)
                 .ToListAsync();
 
             //// فلترة حسب نوع العقار
@@ -81,14 +83,15 @@ namespace real_estate.Controllers
         public async Task<IActionResult> AddRealEstate([FromForm] RealEstateDto EstateFromReq)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var imageUrls = new List<string>();
+            var imagesWithPublicIds = new Dictionary<string, string>();
 
             // upload images on cloudinary
             if (EstateFromReq.Images.Count > 0)
             {
                 // upload all images 
-                imageUrls = await _cloudinaryImageUploadService.UploadAsync(EstateFromReq.Images);
+                imagesWithPublicIds = await _cloudinaryImageUploadService.UploadAsync(EstateFromReq.Images);
             }
+
             var realEstate = new RealEstate
             {
                 Title = EstateFromReq.Title,
@@ -100,10 +103,13 @@ namespace real_estate.Controllers
                 Bathrooms = EstateFromReq.Bathrooms,
                 EstateType = EstateFromReq.EstateType,
                 IsAvailable = EstateFromReq.IsAvailable,
-                Images = imageUrls,
                 OwnerName = EstateFromReq.OwnerName,
                 CreatedAt = DateTime.UtcNow
             };
+            foreach (var image in imagesWithPublicIds) {
+
+                realEstate.Images.Add(new RealEstateImage { Url = image.Key,PublicId = image.Value });
+            }
             _realEstateDbContext.RealEstates.Add(realEstate);
             await _realEstateDbContext.SaveChangesAsync();
 
@@ -121,8 +127,13 @@ namespace real_estate.Controllers
             // تحديث الصور لو المستخدم بعث صور جديدة
             if (EstateFromReq.Images != null && EstateFromReq.Images.Count > 0)
             {
-                var imageUrls = await _cloudinaryImageUploadService.UploadAsync(EstateFromReq.Images);
-                estate.Images = imageUrls;
+                var imagesWithPublicIds = new Dictionary<string, string>();
+                await _cloudinaryImageUploadService.UploadAsync(EstateFromReq.Images);
+                foreach (var image in imagesWithPublicIds)
+                {
+
+                    estate.Images.Add(new RealEstateImage { Url = image.Key, PublicId = image.Value });
+                }
             }
 
             estate.Title = EstateFromReq.Title;

@@ -23,8 +23,8 @@ namespace real_estate.Models.ApplicationContext
         }
 
         public DbSet<RealEstate> RealEstates { get; set; }
-        public DbSet<Owner> Owners { get; set; }
-        public DbSet<EstateType> EstateTypes { get; set; }
+        //public DbSet<Owner> Owners { get; set; }
+        //public DbSet<EstateType> EstateTypes { get; set; }
         public DbSet<RealEstateImage> RealEstateImages { get; set; }
     }
 }

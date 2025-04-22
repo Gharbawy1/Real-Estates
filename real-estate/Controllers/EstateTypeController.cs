@@ -1,83 +1,83 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using real_estate.DTO;
-using real_estate.Models;
-using real_estate.Models.ApplicationContext;
+﻿//using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Metadata.Internal;
+//using real_estate.DTO;
+//using real_estate.Models;
+//using real_estate.Models.ApplicationContext;
 
-namespace real_estate.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EstateTypeController : ControllerBase
-    {
-        private readonly RealEstateDbContext _context;
+//namespace real_estate.Controllers
+//{
+//    [Route("api/[controller]")]
+//    [ApiController]
+//    public class EstateTypeController : ControllerBase
+//    {
+//        private readonly RealEstateDbContext _context;
 
-        public EstateTypeController(RealEstateDbContext context)
-        {
-            _context = context;
-        }
+//        public EstateTypeController(RealEstateDbContext context)
+//        {
+//            _context = context;
+//        }
 
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<EstateType>>> GetEstateTypes()
-        {
-            return await _context.EstateTypes.ToListAsync();
-        }
+//        [HttpGet("all")]
+//        public async Task<ActionResult<IEnumerable<EstateType>>> GetEstateTypes()
+//        {
+//            return await _context.EstateTypes.ToListAsync();
+//        }
 
-        [HttpGet("get-by-id/{id}")]
-        public async Task<ActionResult<EstateType>> GetById(int id)
-        {
-            var type =  await _context.EstateTypes.FindAsync(id);
-            if (type == null) {
-                return NotFound($"Estate Type with id {id} not found");
-            }
-            return Ok(type);
-        }
+//        [HttpGet("get-by-id/{id}")]
+//        public async Task<ActionResult<EstateType>> GetById(int id)
+//        {
+//            var type =  await _context.EstateTypes.FindAsync(id);
+//            if (type == null) {
+//                return NotFound($"Estate Type with id {id} not found");
+//            }
+//            return Ok(type);
+//        }
 
-        [HttpPost("add")]
-        public async Task<ActionResult<EstateType>> AddEstateType([FromBody] EstateType estateType)
-        {
-            if (_context.EstateTypes.Any(et => et.Name == estateType.Name))
-            {
-                return BadRequest("هذا النوع موجود بالفعل.");
-            }
+//        [HttpPost("add")]
+//        public async Task<ActionResult<EstateType>> AddEstateType([FromBody] EstateType estateType)
+//        {
+//            if (_context.EstateTypes.Any(et => et.Name == estateType.Name))
+//            {
+//                return BadRequest("هذا النوع موجود بالفعل.");
+//            }
 
-            var newEstate = new EstateType()
-            {
-                Name = estateType.Name,
-            };
+//            var newEstate = new EstateType()
+//            {
+//                Name = estateType.Name,
+//            };
 
-            _context.EstateTypes.Add(newEstate);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetEstateTypes), new { Name = estateType.Name }, estateType);
-        }
+//            _context.EstateTypes.Add(newEstate);
+//            await _context.SaveChangesAsync();
+//            return CreatedAtAction(nameof(GetEstateTypes), new { Name = estateType.Name }, estateType);
+//        }
 
-        [HttpPut("update/{oldTypeId}")]
-        public async Task<IActionResult> UpdateEstateType(int oldTypeId,[FromBody] string newName)
-        {
-            var existingType = await _context.EstateTypes.FindAsync(oldTypeId);
-            if (existingType == null) return NotFound("نوع العقار غير موجود.");
+//        [HttpPut("update/{oldTypeId}")]
+//        public async Task<IActionResult> UpdateEstateType(int oldTypeId,[FromBody] string newName)
+//        {
+//            var existingType = await _context.EstateTypes.FindAsync(oldTypeId);
+//            if (existingType == null) return NotFound("نوع العقار غير موجود.");
 
-            existingType.Name = newName;
-            await _context.SaveChangesAsync();
-            return Ok("تم تحديث نوع العقار بنجاح.");
-        }
+//            existingType.Name = newName;
+//            await _context.SaveChangesAsync();
+//            return Ok("تم تحديث نوع العقار بنجاح.");
+//        }
 
-        [HttpDelete("delete/{TypeId}")]
-        public async Task<IActionResult> DeleteEstateType(int TypeId)
-        {
-            var estateType = await _context.EstateTypes.FindAsync(TypeId);
-            if (estateType == null) return NotFound("نوع العقار غير موجود.");
+//        [HttpDelete("delete/{TypeId}")]
+//        public async Task<IActionResult> DeleteEstateType(int TypeId)
+//        {
+//            var estateType = await _context.EstateTypes.FindAsync(TypeId);
+//            if (estateType == null) return NotFound("نوع العقار غير موجود.");
 
-            if (_context.RealEstates.Any(r => r.Id == TypeId))
-            {
-                return BadRequest("لا يمكن حذف هذا النوع لأنه مرتبط بعقارات.");
-            }
+//            if (_context.RealEstates.Any(r => r.Id == TypeId))
+//            {
+//                return BadRequest("لا يمكن حذف هذا النوع لأنه مرتبط بعقارات.");
+//            }
 
-            _context.EstateTypes.Remove(estateType);
-            await _context.SaveChangesAsync();
-            return Ok("تم حذف نوع العقار بنجاح.");
-        }
-    }
-}
+//            _context.EstateTypes.Remove(estateType);
+//            await _context.SaveChangesAsync();
+//            return Ok("تم حذف نوع العقار بنجاح.");
+//        }
+//    }
+//}

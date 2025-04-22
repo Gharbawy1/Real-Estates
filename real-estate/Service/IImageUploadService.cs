@@ -4,7 +4,7 @@ namespace real_estate.Service
 {
     public interface IImageUploadService
     {
-        Task<List<string>> UploadAsync(ICollection<IFormFile> files);
+        Task<Dictionary<string, string>> UploadAsync(ICollection<IFormFile> files);
         Task DeleteImagesAsync(List<string> publicIds);
 
     }

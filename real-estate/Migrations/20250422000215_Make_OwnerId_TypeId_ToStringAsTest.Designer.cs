@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using real_estate.Models.ApplicationContext;
 
@@ -11,9 +12,11 @@ using real_estate.Models.ApplicationContext;
 namespace real_estate.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    partial class RealEstateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422000215_Make_OwnerId_TypeId_ToStringAsTest")]
+    partial class Make_OwnerId_TypeId_ToStringAsTest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,54 @@ namespace real_estate.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("real_estate.Models.EstateType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EstateTypes");
+                });
+
+            modelBuilder.Entity("real_estate.Models.Owner", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalContactInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Owners");
+                });
 
             modelBuilder.Entity("real_estate.Models.RealEstate", b =>
                 {
@@ -54,12 +105,18 @@ namespace real_estate.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("EstateTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Images")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("OwnerName")
                         .IsRequired()
@@ -74,6 +131,10 @@ namespace real_estate.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EstateTypeId");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("RealEstates");
                 });
@@ -97,6 +158,17 @@ namespace real_estate.Migrations
                     b.ToTable("RealEstateImages");
                 });
 
+            modelBuilder.Entity("real_estate.Models.RealEstate", b =>
+                {
+                    b.HasOne("real_estate.Models.EstateType", null)
+                        .WithMany("RealEstates")
+                        .HasForeignKey("EstateTypeId");
+
+                    b.HasOne("real_estate.Models.Owner", null)
+                        .WithMany("RealEstates")
+                        .HasForeignKey("OwnerId");
+                });
+
             modelBuilder.Entity("real_estate.Models.RealEstateImage", b =>
                 {
                     b.HasOne("real_estate.Models.RealEstate", "RealEstate")
@@ -106,6 +178,16 @@ namespace real_estate.Migrations
                         .IsRequired();
 
                     b.Navigation("RealEstate");
+                });
+
+            modelBuilder.Entity("real_estate.Models.EstateType", b =>
+                {
+                    b.Navigation("RealEstates");
+                });
+
+            modelBuilder.Entity("real_estate.Models.Owner", b =>
+                {
+                    b.Navigation("RealEstates");
                 });
 #pragma warning restore 612, 618
         }
